@@ -10,6 +10,12 @@ namespace Backend.Models
         [Required (ErrorMessage = "Не указано имя")]
         public string Name { get; set; }
 
+        [Required(ErrorMessage = "Не указана почта")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Не указан пароль")]
+        public string Password { get; set; }
+
         [Required (ErrorMessage = "Не указана роль")]
         public int RoleId { get; set; }
 

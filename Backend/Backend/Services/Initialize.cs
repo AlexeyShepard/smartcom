@@ -1,5 +1,6 @@
 ﻿
 using Backend.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace Backend.Services
@@ -10,15 +11,26 @@ namespace Backend.Services
         {
             if (!context.Roles.Any() && !context.Statuses.Any() && !context.Categories.Any())
             {
+                
                 context.AddRange(
                     new Role
                     {
-                        Name = "Заказчик"
+                        Name = "Менеджер"
                     },
                     new Role
                     {
-                        Name = "Менеджер"
+                        Name = "Заказчик"
                     });
+
+                context.AddRange(
+                    new User
+                    {
+                        Name = "Администратор",
+                        Email = "Admin@gmail.com",
+                        Password = "123456",
+                        RoleId = 1
+                    }
+                ); ;
 
                 context.AddRange(
                     new Status
@@ -51,6 +63,7 @@ namespace Backend.Services
                         Name = "Выпечка"
                     });
                 context.SaveChanges();
+
             }
         }
     }

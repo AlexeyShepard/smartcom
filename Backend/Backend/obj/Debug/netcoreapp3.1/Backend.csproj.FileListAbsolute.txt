@@ -75,3 +75,4 @@ D:\Projects\smartcom3\Backend\Backend\obj\Debug\netcoreapp3.1\Backend.csproj.Cop
 D:\Projects\smartcom3\Backend\Backend\obj\Debug\netcoreapp3.1\Backend.dll
 D:\Projects\smartcom3\Backend\Backend\obj\Debug\netcoreapp3.1\Backend.pdb
 D:\Projects\smartcom3\Backend\Backend\obj\Debug\netcoreapp3.1\Backend.genruntimeconfig.cache
+D:\Projects\smartcom3\Backend\Backend\bin\Debug\netcoreapp3.1\microsoft.identitymodel.dll

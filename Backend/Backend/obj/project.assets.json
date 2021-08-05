@@ -270,6 +270,15 @@
           "lib/netcoreapp2.1/Microsoft.Identity.Client.dll": {}
         }
       },
+      "Microsoft.IdentityModel/7.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net35/microsoft.identitymodel.dll": {}
+        },
+        "runtime": {
+          "lib/net35/microsoft.identitymodel.dll": {}
+        }
+      },
       "Microsoft.IdentityModel.JsonWebTokens/5.6.0": {
         "type": "package",
         "dependencies": {
@@ -1940,6 +1949,18 @@
         "ref/uap10.0/Microsoft.Identity.Client.xml",
         "ref/xamarinmac20/Microsoft.Identity.Client.dll",
         "ref/xamarinmac20/Microsoft.Identity.Client.xml"
+      ]
+    },
+    "Microsoft.IdentityModel/7.0.0": {
+      "sha512": "55LP0/gF3OAGhPNw/QxJs9q72xyS8rJ4ndZJC+GMSEjARh4hPmGVet2Oa9B8p8KKl3g8u3e+mh6WoBoUa0AiAA==",
+      "type": "package",
+      "path": "microsoft.identitymodel/7.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net35/microsoft.identitymodel.dll",
+        "microsoft.identitymodel.7.0.0.nupkg.sha512",
+        "microsoft.identitymodel.nuspec"
       ]
     },
     "Microsoft.IdentityModel.JsonWebTokens/5.6.0": {
@@ -5785,6 +5806,7 @@
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
       "Microsoft.EntityFrameworkCore.SqlServer >= 5.0.8",
+      "Microsoft.IdentityModel >= 7.0.0",
       "Microsoft.VisualStudio.Azure.Containers.Tools.Targets >= 1.10.14"
     ]
   },
@@ -5831,6 +5853,10 @@
             "target": "Package",
             "version": "[5.0.8, )"
           },
+          "Microsoft.IdentityModel": {
+            "target": "Package",
+            "version": "[7.0.0, )"
+          },
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
             "target": "Package",
             "version": "[1.10.14, )"
@@ -5857,5 +5883,17 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.302\\RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Пакет \"Microsoft.IdentityModel 7.0.0\" был восстановлен с помощью \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8\", а не целевой платформы проекта \".NETCoreApp,Version=v3.1\". Этот пакет может быть не полностью совместим с вашим проектом.",
+      "libraryId": "Microsoft.IdentityModel",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v3.1"
+      ]
+    }
+  ]
 }

@@ -1,4 +1,5 @@
 ﻿using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,15 +10,16 @@ using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
+    [Authorize(Roles = "Менеджер")]
     [Route("[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
-        SmartcomContext DB;
+        private SmartcomContext DB;
 
-        public UserController(SmartcomContext context)
+        public UserController(SmartcomContext Context)
         {
-            DB = context;
+            DB = Context;
         }
         
         [HttpPost]
