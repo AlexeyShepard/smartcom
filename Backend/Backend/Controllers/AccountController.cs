@@ -7,10 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Web;
 using System;
+using System.Text.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
+using Amazon.CloudFront.Model;
 
 namespace Backend.Controllers
 {
@@ -38,7 +41,15 @@ namespace Backend.Controllers
                     Role UserRole = await DB.Roles.FirstOrDefaultAsync(r => r.Name == "Заказчик");
                     if (UserRole != null) User.Role = UserRole;
 
+                    Customer UserCustomer = new Customer
+                    {
+                        Adress = Model.Adress,
+                        User = User,
+                        Code = GenerateCode()
+                    };
+
                     DB.Users.Add(User);
+                    DB.Customers.Add(UserCustomer);
                     await DB.SaveChangesAsync();
 
                     await Authenticate(User); // аутентификация
@@ -49,16 +60,21 @@ namespace Backend.Controllers
                         Email = Model.Email
                     });
                 }
-                else return BadRequest();
+                else
+                {
+                    ModelState.AddModelError("error", "Некорректные логин и(или) пароль");
+                    return BadRequest();
+                }
             }
             else
             {
-                ModelState.AddModelError("", "Некорректные логин и(или) пароль");
+                ModelState.AddModelError("error", "Некорректные логин и(или) пароль");
                 return BadRequest(ModelState);
             }
         }
 
-        [HttpGet]
+        [HttpPost]
+        [Route("login")]
         public async Task<IActionResult> Login(LoginModel Model)
         {
             if (ModelState.IsValid)
@@ -70,13 +86,17 @@ namespace Backend.Controllers
                 {
                     await Authenticate(User); // аутентификация
 
-                    return Ok();
+                    return Ok(User.Name);
                 }
-                else return BadRequest();
+                else
+                {
+                    ModelState.AddModelError("error", "Некорректные логин и(или) пароль");
+                    return BadRequest(ModelState);
+                }            
             }
             else
             {
-                ModelState.AddModelError("", "Некорректные логин и(или) пароль");
+                ModelState.AddModelError("error", "Некорректные логин и(или) пароль");
                 return BadRequest(ModelState);
             }
         }
@@ -99,13 +119,23 @@ namespace Backend.Controllers
             // создаем один claim
             var claims = new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, User.Email),
+                new Claim(ClaimsIdentity.DefaultNameClaimType, User.Id.ToString()),
                 new Claim(ClaimsIdentity.DefaultRoleClaimType, User.Role?.Name)
             };
             // создаем объект ClaimsIdentity
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
             // установка аутентификационных куки
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+        }
+
+        private string GenerateCode()
+        {
+            DateTime DateNow = DateTime.Now;
+            Random Random = new Random();
+            int Value = Random.Next(1000, 9999);
+
+
+            return Value.ToString() + "-" + DateNow.ToString("yyyy");
         }
     }
 }

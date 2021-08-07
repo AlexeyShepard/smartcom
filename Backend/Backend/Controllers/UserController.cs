@@ -30,6 +30,7 @@ namespace Backend.Controllers
             try
             {
                 DB.Users.Add(User);
+
                 await DB.SaveChangesAsync();
 
                 return Ok(User);

@@ -9,13 +9,16 @@ namespace Backend.Models
         public int Id { get; set; }
 
         [Required (ErrorMessage = "Требуется код заказчика")]
-        [RegularExpression(@"\d{4}-\d{4}", ErrorMessage = "Неверный формат кода продукта")]
+        [RegularExpression(@"\d{4}-\d{4}", ErrorMessage = "Неверный формат кода заказчика")]
         public string Code { get; set; }
 
         [Required (ErrorMessage = "Требуется адресс заказчика")]
         public string Adress { get; set; }
 
         public float? Discount { get; set; }
+
+        [Required (ErrorMessage = "Требуется идентификатор пользователя")]
+        public int UserId { get; set; }
 
         public User User { get; set; }
 
