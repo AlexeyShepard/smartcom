@@ -77,3 +77,4 @@ D:\Projects\smartcom3\Backend\Backend\obj\Debug\netcoreapp3.1\Backend.pdb
 D:\Projects\smartcom3\Backend\Backend\obj\Debug\netcoreapp3.1\Backend.genruntimeconfig.cache
 D:\Projects\smartcom3\Backend\Backend\bin\Debug\netcoreapp3.1\microsoft.identitymodel.dll
 D:\Projects\smartcom3\Backend\Backend\bin\Debug\netcoreapp3.1\AWSSDK.dll
+D:\Projects\smartcom3\Backend\Backend\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll

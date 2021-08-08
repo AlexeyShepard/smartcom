@@ -11,6 +11,21 @@
           "lib/net45/AWSSDK.dll": {}
         }
       },
+      "Microsoft.AspNetCore.Authentication.JwtBearer/3.1.17": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "5.5.0"
+        },
+        "compile": {
+          "lib/netcoreapp3.1/Microsoft.AspNetCore.Authentication.JwtBearer.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/Microsoft.AspNetCore.Authentication.JwtBearer.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
       "Microsoft.AspNetCore.Cors/2.2.0": {
         "type": "package",
         "dependencies": {
@@ -1518,6 +1533,21 @@
         "tools/account-management.ps1",
         "tools/net35/install.ps1",
         "tools/net45/install.ps1"
+      ]
+    },
+    "Microsoft.AspNetCore.Authentication.JwtBearer/3.1.17": {
+      "sha512": "HUb1PtlvXhT7EXrNm9NRdgwR+Urz6wXWIKUnJukgPUWH1ZlVKtTsYzw1kNBsJXba/UcZ6Fr+1SPFd9syk/2YHg==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.authentication.jwtbearer/3.1.17",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/netcoreapp3.1/Microsoft.AspNetCore.Authentication.JwtBearer.dll",
+        "lib/netcoreapp3.1/Microsoft.AspNetCore.Authentication.JwtBearer.xml",
+        "microsoft.aspnetcore.authentication.jwtbearer.3.1.17.nupkg.sha512",
+        "microsoft.aspnetcore.authentication.jwtbearer.nuspec"
       ]
     },
     "Microsoft.AspNetCore.Cors/2.2.0": {
@@ -5668,6 +5698,7 @@
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
       "AWSSDK >= 2.3.55.2",
+      "Microsoft.AspNetCore.Authentication.JwtBearer >= 3.1.17",
       "Microsoft.AspNetCore.Cors >= 2.2.0",
       "Microsoft.EntityFrameworkCore.SqlServer >= 5.0.8",
       "Microsoft.IdentityModel >= 7.0.0",
@@ -5717,6 +5748,10 @@
           "AWSSDK": {
             "target": "Package",
             "version": "[2.3.55.2, )"
+          },
+          "Microsoft.AspNetCore.Authentication.JwtBearer": {
+            "target": "Package",
+            "version": "[3.1.17, )"
           },
           "Microsoft.AspNetCore.Cors": {
             "target": "Package",

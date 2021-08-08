@@ -14,12 +14,15 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using Amazon.CloudFront.Model;
+using System.IdentityModel.Tokens.Jwt;
+using Backend.Services;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Backend.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController : ExtendController
     {
         private SmartcomContext DB;
 
@@ -29,14 +32,13 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterModel Model)
+        public async Task<JsonResult> Register(RegisterModel Model)
         {
             if (ModelState.IsValid)
             {
                 User User = await DB.Users.FirstOrDefaultAsync(u => u.Email == Model.Email);
                 if (User == null)
                 {
-                    // добавляем пользователя в бд
                     User = new User { Name = Model.Name, Email = Model.Email, Password = Model.Password };
                     Role UserRole = await DB.Roles.FirstOrDefaultAsync(r => r.Name == "Заказчик");
                     if (UserRole != null) User.Role = UserRole;
@@ -52,10 +54,12 @@ namespace Backend.Controllers
                     DB.Customers.Add(UserCustomer);
                     await DB.SaveChangesAsync();
 
-                    await Authenticate(User); // аутентификация
+                    Authenticate(User);
 
-                    return Ok(new
+                    return JsonResponse(new
                     {
+                        status = "Ok",
+                        token = AuthJwt(User),
                         Name = Model.Name,
                         Email = Model.Email
                     });
@@ -63,69 +67,46 @@ namespace Backend.Controllers
                 else
                 {
                     ModelState.AddModelError("error", "Некорректные логин и(или) пароль");
-                    return BadRequest();
+                    return JsonResponse(ModelState);
                 }
             }
             else
             {
                 ModelState.AddModelError("error", "Некорректные логин и(или) пароль");
-                return BadRequest(ModelState);
+                return JsonResponse(ModelState);
             }
         }
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login(LoginModel Model)
+        public async Task<JsonResult> Login(LoginModel Model)
         {
             if (ModelState.IsValid)
             {
                 User User = await DB.Users
                     .Include(u => u.Role)
                     .FirstOrDefaultAsync(u => u.Email == Model.Email && u.Password == Model.Password);
+
                 if (User != null)
                 {
-                    await Authenticate(User); // аутентификация
+                    var Response = new
+                    {
+                        token = AuthJwt(User)
+                    };
 
-                    return Ok(User.Name);
+                    return JsonResponse(Response);
                 }
                 else
                 {
                     ModelState.AddModelError("error", "Некорректные логин и(или) пароль");
-                    return BadRequest(ModelState);
-                }            
+                    return JsonResponse(ModelState);
+                }
             }
             else
             {
                 ModelState.AddModelError("error", "Некорректные логин и(или) пароль");
-                return BadRequest(ModelState);
+                return JsonResponse(ModelState);
             }
-        }
-
-        [HttpDelete]
-        [Authorize]
-        public async Task<IActionResult> Logout()
-        {
-
-            await HttpContext.SignOutAsync();
-            
-            return Ok(new
-            {
-                Message = "Вы вышли из системы"
-            });
-        }
-
-        private async Task Authenticate(User User)
-        {
-            // создаем один claim
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, User.Id.ToString()),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, User.Role?.Name)
-            };
-            // создаем объект ClaimsIdentity
-            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
-            // установка аутентификационных куки
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
 
         private string GenerateCode()
@@ -136,6 +117,37 @@ namespace Backend.Controllers
 
 
             return Value.ToString() + "-" + DateNow.ToString("yyyy");
+        }        
+
+        private string AuthJwt(User User)
+        {
+            var identity = Authenticate(User);
+
+            var now = DateTime.UtcNow;
+            // создаем JWT-токен
+            var jwt = new JwtSecurityToken(
+                    issuer: AuthOptions.ISSUER,
+                    audience: AuthOptions.AUDIENCE,
+                    notBefore: now,
+                    claims: identity.Claims,
+                    expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
+                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            return encodedJwt;
+        }
+        
+        private ClaimsIdentity Authenticate(User User)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimsIdentity.DefaultNameClaimType, User.Id.ToString()),
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, User.Role?.Name)
+            };
+            ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+
+            return claimsIdentity;
         }
     }
 }
+

@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "Jq9y6Nm0P6JaarP7EXDZa7D7WzMpTVFix0tEhUuberDCr0rYMbkQURxjEt+Dc0WxCeAvW5h+rFJSinFP0qREdg==",
+  "dgSpecHash": "cVVMF0I3ZthRujyQXV1SJteLNzq2ENxKGmNVxpIKGgiDxzwTI4+Hr4zkfymURu29MeEw+KTAWJZkSdeW43bF5g==",
   "success": true,
   "projectFilePath": "D:\\Projects\\smartcom3\\Backend\\Backend\\Backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Alexey\\.nuget\\packages\\awssdk\\2.3.55.2\\awssdk.2.3.55.2.nupkg.sha512",
+    "C:\\Users\\Alexey\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\3.1.17\\microsoft.aspnetcore.authentication.jwtbearer.3.1.17.nupkg.sha512",
     "C:\\Users\\Alexey\\.nuget\\packages\\microsoft.aspnetcore.cors\\2.2.0\\microsoft.aspnetcore.cors.2.2.0.nupkg.sha512",
     "C:\\Users\\Alexey\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.2.0\\microsoft.aspnetcore.http.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\Alexey\\.nuget\\packages\\microsoft.aspnetcore.http.extensions\\2.2.0\\microsoft.aspnetcore.http.extensions.2.2.0.nupkg.sha512",
