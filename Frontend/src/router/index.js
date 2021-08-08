@@ -2,6 +2,8 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Registration from '@/components/Registration';
 import Authorization from '@/components/Authorization';
+import CustomerArea from '@/components/Customer/CustomerArea';
+import AdminArea from '@/components/Admin/AdminArea';
 
 Vue.use(VueRouter)
 
@@ -15,6 +17,16 @@ const routes = [
     path: '/auth',
     name: "Authorization",
     component: Authorization
+  },
+  {
+    path: '/customer',
+    name: 'CustomerArea',
+    component: CustomerArea
+  },
+  {
+    path: '/admin',
+    name: 'AdminArea',
+    component: AdminArea
   }
   /*{
     path: '/about',

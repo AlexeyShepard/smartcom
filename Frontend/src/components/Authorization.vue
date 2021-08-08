@@ -30,8 +30,9 @@
                                 </b-input>
                             </b-field>
                         </section>
+                        <router-link to="/reg">Зарегистрироваться</router-link>
                         <footer class="modal-card-foot">
-                            <button class="button is-primary" @click="SignIn()">Войти</button>
+                            <b-button variant="primary" @click="SignIn()">Войти</b-button>
                         </footer>
                     </div>
                 </form>
@@ -43,7 +44,8 @@
 
 <script>
 
-import axios from 'axios'
+import axios from 'axios';
+import router from '@/router';
 
 export default {
     data() {
@@ -53,9 +55,9 @@ export default {
         }
     },
     methods: {
-        async SignIn() {
-
-                await axios.post('http://localhost:11549/Account/login', {
+        SignIn() {
+                
+                axios.post('http://localhost:11549/Account/login', {
                     Email: this.email,
                     Password: this.password
                 },
@@ -70,12 +72,18 @@ export default {
                 })
                 .then(function(response) {
                         const obj = JSON.parse(response.data);
-                        localStorage.setItem("token", obj.token);
-                        alert("Вы успешно авторизовались")
+                        localStorage.setItem("Token", obj.Token);
+                        localStorage.setItem("Name", obj.Name);
+                        localStorage.setItem("Email", obj.Email);
+                        localStorage.setItem("RoleId", obj.RoleId);
+
+                        if(localStorage.getItem("RoleId") == 1) router.push("admin");
+                        else if(localStorage.getItem("RoleId") == 2) router.push('customer');
                 })
                 .catch(function (error) {
                         alert(error);
-                });               
+                });
+                
             }            
     }
 }

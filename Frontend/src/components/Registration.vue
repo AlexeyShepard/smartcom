@@ -64,7 +64,7 @@
 
                         </section>
                         <footer class="modal-card-foot">
-                            <button class="button is-primary" @click="SignOn()">Зарегистрироваться</button>
+                            <b-button variant="primary" @click="SignOn()">Зарегистрироваться</b-button>
                         </footer>
                     </div>
                 </form>
@@ -76,7 +76,8 @@
 
 <script>
 
-import axios from 'axios'
+import axios from 'axios';
+import router from '@/router';
 
 export default {
     data() {
@@ -89,11 +90,11 @@ export default {
         }
     },
     methods: {
-        async SignOn() {
+        SignOn() {
 
                 //alert("Регистрация пошла!");
                 
-                await axios.post('http://localhost:11549/Account', {
+                axios.post('http://localhost:11549/Account', {
                     Name: this.name,
                     Email: this.email,
                     Password: this.password,
@@ -111,12 +112,16 @@ export default {
                 })
                 .then(function(response) {
                         const obj = JSON.parse(response.data);
-                        localStorage.setItem("token", obj.token);
-                        alert("Вы успешно зарегистрировались")
+                        localStorage.setItem("Token", obj.Token);
+                        localStorage.setItem("Name", obj.Name);
+                        localStorage.setItem("Email", obj.Email);
+                        localStorage.setItem("RoleId", obj.RoleId);
+                        router.push('customer');
                 })
                 .catch(function (error) {
                         alert(error);
-                });               
+                }); 
+                
             }            
     }
 }

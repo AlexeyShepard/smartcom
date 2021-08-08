@@ -58,10 +58,11 @@ namespace Backend.Controllers
 
                     return JsonResponse(new
                     {
-                        status = "Ok",
-                        token = AuthJwt(User),
-                        Name = Model.Name,
-                        Email = Model.Email
+                        Status = "Ok",
+                        Token = AuthJwt(User),
+                        Name = User.Name,
+                        Email = User.Email,
+                        RoleId = User.Role.Id
                     });
                 }
                 else
@@ -91,7 +92,12 @@ namespace Backend.Controllers
                 {
                     var Response = new
                     {
-                        token = AuthJwt(User)
+                        Status = "Ок",
+                        Token = AuthJwt(User),
+                        Name = User.Name,
+                        Email = User.Email,
+                        RoleId = User.Role.Id
+
                     };
 
                     return JsonResponse(Response);
