@@ -11,6 +11,13 @@ using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
+    public class FormatedStatus
+    {
+        public string text { get; set; }
+
+        public int value { get; set; }
+    }
+
     [Authorize]
     [Route("[controller]")]
     [ApiController]
@@ -87,9 +94,30 @@ namespace Backend.Controllers
 
         [Authorize(Roles = "Менеджер")]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Order>>> Get()
+        public async Task<ActionResult<IEnumerable<CRUDOrder>>> Get()
         {
-            return await DB.Orders.ToListAsync();
+            List<CRUDOrder> OrderStatusCustomer = new List<CRUDOrder>();
+
+            foreach(Order Order in DB.Orders.ToList())
+            {
+                Customer Customer = await DB.Customers.FirstOrDefaultAsync(u => u.Id == Order.CustomerId);
+                User User = await DB.Users.FirstOrDefaultAsync(u => u.Id == Customer.UserId);
+                Status Status = await DB.Statuses.FirstOrDefaultAsync(u => u.Id == Order.StatusId);
+
+                OrderStatusCustomer.Add(new CRUDOrder
+                {
+                    Id = Order.Id,
+                    Order_Date = Order.Order_Date,
+                    Shipment_Date = Order.Shipment_Date,
+                    Order_Number = Order.Order_Number,
+                    CustomerId = Order.CustomerId,
+                    StatusId = Order.StatusId,
+                    UserName = User.Name,
+                    StatusName = Status.Name
+                });
+            }
+
+            return OrderStatusCustomer;
         }
 
         [Authorize(Roles = "Менеджер")]
@@ -106,7 +134,7 @@ namespace Backend.Controllers
         [HttpPut]
         public async Task<ActionResult<Order>> Put(Order Order)
         {
-            if (Order == null || ModelState.IsValid)
+            if (Order == null || !ModelState.IsValid)
             {
                 return BadRequest();
             }
@@ -140,10 +168,24 @@ namespace Backend.Controllers
             int Value = Random.Next(1000, 9999);
 
             return Value;
+        }
 
-            /*DateTime DateNow = DateTime.Now;
+        [HttpGet]
+        [Route("status")]
+        public async Task<ActionResult<IEnumerable<FormatedStatus>>> GetStatus()
+        {
+            List<FormatedStatus> FStatuses = new List<FormatedStatus>();
 
-            return DateNow.ToString("yy-ffff-ttdd");*/
+            foreach (Status Status in await DB.Statuses.ToListAsync())
+            {
+                FStatuses.Add(new FormatedStatus
+                {
+                    text = Status.Name,
+                    value = Status.Id
+                });
+            }
+
+            return FStatuses;
         }
     }
 }

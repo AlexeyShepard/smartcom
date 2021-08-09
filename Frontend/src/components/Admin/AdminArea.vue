@@ -3,7 +3,7 @@
         <h1>Панель администратора</h1>
         <b-tabs content-class="mt-3">
             <CustomerTab/>
-            <b-tab title="Заказы"><p>ЗАКАЗЧИКИ</p></b-tab>
+            <OrderTab/>
             <ProductTab/>
         </b-tabs>
     </div>     
@@ -13,12 +13,14 @@
 
 import CustomerTab from './CustomerTab.vue';
 import ProductTab from './ProductTab.vue';
+import OrderTab from './OrderTab.vue';
 
 export default {
     
     components : {
         CustomerTab,
-        ProductTab
+        ProductTab,
+        OrderTab
     }  
 }
 
