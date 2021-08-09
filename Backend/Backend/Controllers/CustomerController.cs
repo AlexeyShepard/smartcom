@@ -23,16 +23,37 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Customer>> Post(Customer Customer)
+        public async Task<ActionResult<Customer>> Post(CRUDCustomer CRUDCustomer)
         {
 
-            if (Customer == null) return BadRequest();
+            if (CRUDCustomer == null) return BadRequest();
             try
             {
+                
+                User User = new User
+                {
+                    Name = CRUDCustomer.Name,
+                    Email = CRUDCustomer.Email,
+                    Password = CRUDCustomer.Password,
+                };
+
+                Role UserRole = await DB.Roles.FirstOrDefaultAsync(r => r.Name == "Заказчик");
+                if (UserRole != null) User.Role = UserRole;
+
+                Customer Customer = new Customer
+                {
+                    Code = GenerateCode(),
+                    Adress = CRUDCustomer.Adress,
+                    Discount = CRUDCustomer.Discount,
+                    User = User
+                };
+
+                DB.Users.Add(User);
+
                 DB.Customers.Add(Customer);
                 await DB.SaveChangesAsync();
 
-                return Ok(Customer);
+                return Ok("Заказчик добавлен");
             }
             catch (DbUpdateException Ex)
             {
@@ -41,48 +62,107 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Customer>>> Get()
+        public async Task<ActionResult<IEnumerable<CRUDCustomer>>> Get()
         {
-            return await DB.Customers.ToListAsync();
+            List<CRUDCustomer> UserCustomers = new List<CRUDCustomer>();
+
+            foreach(Customer Customer in DB.Customers.ToList()) {
+                User User = await DB.Users.FirstOrDefaultAsync(u => u.Id == Customer.UserId);
+                UserCustomers.Add(new CRUDCustomer
+                    {
+                        Id = Customer.Id,
+                        Name = User.Name,
+                        Email = User.Email,
+                        Password = User.Password,
+                        Code = Customer.Code,
+                        Adress = Customer.Adress,
+                        Discount = Customer.Discount,
+                        UserId = Customer.UserId
+                    }
+                );
+            }
+
+            return UserCustomers;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> Get(int id)
+        public async Task<ActionResult<CRUDCustomer>> Get(int id)
         {
             Customer Customer = await DB.Customers.FirstOrDefaultAsync(x => x.Id == id);
+
             if (Customer == null) return NotFound();
 
-            return new ObjectResult(Customer);
+            User User = await DB.Users.FirstOrDefaultAsync(u => u.Id == Customer.UserId);
+
+            CRUDCustomer UserCustomer = new CRUDCustomer
+            {
+                Id = Customer.Id,
+                Name = User.Name,
+                Email = User.Email,
+                Password = User.Password,
+                Code = Customer.Code,
+                Adress = Customer.Adress,
+                Discount = Customer.Discount,
+                UserId = Customer.UserId
+            };
+
+            return new ObjectResult(UserCustomer);
         }
 
         [HttpPut]
-        public async Task<ActionResult<Customer>> Put(Customer Customer)
+        public async Task<ActionResult<Customer>> Put(CRUDCustomer CRUDCustomer)
         {
-            if (Customer == null)
+            if (CRUDCustomer == null) return BadRequest();
+
+            Customer Customer = new Customer
             {
-                return BadRequest();
-            }
-            if (!DB.Customers.Any(x => x.Id == Customer.Id))
+                Id = CRUDCustomer.Id,
+                Discount = CRUDCustomer.Discount,
+                Adress = CRUDCustomer.Adress,
+                Code = CRUDCustomer.Code,
+                UserId = CRUDCustomer.UserId
+            };
+
+            if (!DB.Customers.Any(x => x.Id == Customer.Id)) return NotFound();
+
+            User User = new User
             {
-                return NotFound();
-            }
+                Id = CRUDCustomer.UserId,
+                Name = CRUDCustomer.Name,
+                Email = CRUDCustomer.Email,
+                Password = CRUDCustomer.Password,
+                RoleId = 2
+            };
+
+            if (!DB.Users.Any(x => x.Id == User.Id)) return NotFound();
 
             DB.Update(Customer);
+            DB.Update(User);
             await DB.SaveChangesAsync();
-            return Ok(Customer);
+            return Ok("Пользователь изменён");
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<Customer>> Delete(int id)
         {
             Customer Customer = DB.Customers.FirstOrDefault(x => x.Id == id);
-            if (Customer == null)
-            {
-                return NotFound();
-            }
+            if (Customer == null) return NotFound();
+            User User = await DB.Users.FirstOrDefaultAsync(u => u.Id == Customer.UserId);
+          
             DB.Customers.Remove(Customer);
+            DB.Users.Remove(User);
             await DB.SaveChangesAsync();
             return Ok(Customer);
+        }
+
+        private string GenerateCode()
+        {
+            DateTime DateNow = DateTime.Now;
+            Random Random = new Random();
+            int Value = Random.Next(1000, 9999);
+
+
+            return Value.ToString() + "-" + DateNow.ToString("yyyy");
         }
     }
 }

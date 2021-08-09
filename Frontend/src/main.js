@@ -12,7 +12,8 @@ Vue.use(axios);
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+Vue.prototype.$ApiUrl = 'http://localhost:11549';
 
 new Vue({
   router,

@@ -94,7 +94,7 @@ export default {
 
                 //alert("Регистрация пошла!");
                 
-                axios.post('http://localhost:11549/Account', {
+                axios.post(this.$ApiUrl + '/Account', {
                     Name: this.name,
                     Email: this.email,
                     Password: this.password,

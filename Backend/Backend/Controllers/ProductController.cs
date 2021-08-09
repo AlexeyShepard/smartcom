@@ -10,6 +10,14 @@ using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
+    public class FormatedCategory
+    {
+        public string text { get; set; }
+
+        public int value { get; set; }
+    }
+    
+    
     [Authorize(Roles="Менеджер")]
     [Route("[controller]")]
     [ApiController]
@@ -29,6 +37,7 @@ namespace Backend.Controllers
             if (Product == null) return BadRequest();
             try
             {
+                Product.Code = GenerateCode();
                 DB.Products.Add(Product);
                 await DB.SaveChangesAsync();
 
@@ -41,9 +50,27 @@ namespace Backend.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> Get()
+        public async Task<ActionResult<IEnumerable<CRUDProduct>>> Get()
         {
-            return await DB.Products.ToListAsync();
+
+            //return await DB.Products.ToListAsync();
+
+            List<CRUDProduct> ProductsCategory = new List<CRUDProduct>();
+
+            foreach (Product Product in DB.Products.ToList())
+            {
+                Category Category = await DB.Categories.FirstOrDefaultAsync(u => u.Id == Product.CategoryId);
+                ProductsCategory.Add(new CRUDProduct
+                {
+                    Id = Product.Id,
+                    Name = Product.Name,
+                    Price = Product.Price,
+                    Code = Product.Code,
+                    CategoryName = Category.Name                 
+                });
+            }
+
+            return ProductsCategory;
         }
 
         [HttpGet("{id}")]
@@ -83,6 +110,31 @@ namespace Backend.Controllers
             DB.Products.Remove(Product);
             await DB.SaveChangesAsync();
             return Ok(Product);
+        }
+
+        [HttpGet]
+        [Route("category")]
+        public async Task<ActionResult<IEnumerable<FormatedCategory>>> GetCategory()
+        {
+            List<FormatedCategory> FCategories = new List<FormatedCategory>();
+            
+            foreach (Category Category in await DB.Categories.ToListAsync())
+            {
+                FCategories.Add(new FormatedCategory
+                {
+                    text = Category.Name,
+                    value = Category.Id
+                });               
+            }
+
+            return FCategories;
+        }
+
+        private string GenerateCode()
+        {
+            DateTime DateNow = DateTime.Now;
+
+            return DateNow.ToString("yy-ffff-") + "AA" + DateNow.ToString("dd");
         }
     }
 }

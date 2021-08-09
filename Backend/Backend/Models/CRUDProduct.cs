@@ -1,15 +1,15 @@
-﻿
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Backend.Models
 {
-    public class Product
+    public class CRUDProduct
     {
         public int Id { get; set; }
 
-        //[Required(ErrorMessage = "Требуется код продукта")]
-        //[RegularExpression(@"\d{2}-\d{4}-[A-Z]{2}\d{2}", ErrorMessage = "Неверный формат кода продукта")]
         public string Code { get; set; }
 
         [Required(ErrorMessage = "Требуется имя продукта")]
@@ -21,13 +21,11 @@ namespace Backend.Models
         [Required(ErrorMessage = "Требуется категория продукта")]
         public int CategoryId { get; set; }
 
-        public Category Category { get; set; }
+        /// <summary>
+        /// Category
+        /// </summary>
 
-        public List<OrderElement> OrderElements { get; set; }
-
-        public Product()
-        {
-            OrderElements = new List<OrderElement>();
-        }
+        [Required(ErrorMessage = "Требуется наименование категории продукта")]
+        public string CategoryName { get; set; }
     }
 }

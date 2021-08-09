@@ -54,10 +54,9 @@ export default {
             password: ''
         }
     },
-    methods: {
-        SignIn() {
-                
-                axios.post('http://localhost:11549/Account/login', {
+    methods: {        
+        SignIn() {               
+                axios.post(this.$ApiUrl + '/Account/login', {
                     Email: this.email,
                     Password: this.password
                 },
