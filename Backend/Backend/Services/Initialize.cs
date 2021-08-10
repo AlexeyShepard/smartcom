@@ -25,6 +25,15 @@ namespace Backend.Services
                         Name = "Заказчик"
                     });
 
+                User User = new User
+                {
+                    Name = "Заказчик Евгений",
+                    Email = "Customer@gmail.com",
+                    Password = "123456",
+                    RoleId = 2
+                };
+
+
                 context.AddRange(
                     new User
                     {
@@ -32,8 +41,15 @@ namespace Backend.Services
                         Email = "Admin@gmail.com",
                         Password = "123456",
                         RoleId = 1
-                    }
-                ); ;
+                    });
+
+                context.AddRange(
+                    new Customer
+                    {
+                        User = User,
+                        Adress = "г. Москва",
+                        Code = "1111-1111"                        
+                    });
 
                 context.AddRange(
                     new Status
@@ -64,6 +80,15 @@ namespace Backend.Services
                     new Category
                     {
                         Name = "Выпечка"
+                    });
+
+                context.AddRange(
+                    new Product
+                    {
+                        Name = "Молоко",
+                        Price = 100,
+                        Code = "11-1111-AS11",
+                        CategoryId = 1
                     });
                 context.SaveChanges();
 
