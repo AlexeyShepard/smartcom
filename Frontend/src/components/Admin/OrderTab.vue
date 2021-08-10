@@ -1,7 +1,12 @@
 <template>
     <div>
         <b-tab title="Заказы">
-            <b-table striped hover :items="OrderItems" :fields="fields">
+            <b-table id="OrderTable"
+            striped hover 
+            :items="OrderItems" 
+            :fields="fields"
+            :per-page="PerPage"
+             :current-page="CurrentPage">
                 <template #cell(Id)="data">
                     {{ data.item.id }}
                 </template>
@@ -24,7 +29,13 @@
                     <b-button variant="primary" size="sm" v-b-modal.modal-edit-order @click="OpenEditOrderModal(data.item)">Редактировать</b-button>
                     <b-button variant="danger" size="sm" @click="DeleteOrder(data.item.id)">Удалить</b-button>
                 </template>
-            </b-table>   
+            </b-table>
+            <b-pagination
+                    v-model="CurrentPage"
+                    :total-rows="rows"
+                    :per-page="PerPage"
+                    aria-controls="OrderTable">
+            </b-pagination>   
         </b-tab>
         <!--Редактирование заказа-->
         <b-modal id="modal-edit-order" title="Редактирование заказа" 
@@ -78,6 +89,8 @@ export default {
             order_number: 0,
             customerId: 0,
             statusId: 0,
+            CurrentPage:1,
+            PerPage:15,
             fields: [
                 'Id',
                 'Дата_оформления',
@@ -126,6 +139,11 @@ export default {
                 .catch(function (error) {
                         alert('ERROR ' + error);
                 });    
+    },
+    computed: {
+      rows() {
+        return this.OrderItems.length
+      }
     },
     methods: {
         async DeleteOrder(id) {

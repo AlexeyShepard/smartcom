@@ -2,7 +2,12 @@
     <div>
         <b-tab title="Продукты">
             <b-button variant="primary modal-button" v-b-modal.modal-add-product>Добавить</b-button>
-            <b-table striped hover :items="ProductItems" :fields="fields">               
+            <b-table id="ProductTable"
+            striped hover 
+            :items="ProductItems" 
+            :fields="fields"
+            :per-page="PerPage"
+            :current-page="CurrentPage">>               
                 <template #cell(Id)="data">
                     {{ data.item.id }}
                 </template>
@@ -23,6 +28,12 @@
                     <b-button variant="danger" size="sm" @click="DeleteProduct(data.item.id)">Удалить</b-button>
                 </template>
             </b-table>
+            <b-pagination
+                    v-model="CurrentPage"
+                    :total-rows="rows"
+                    :per-page="PerPage"
+                    aria-controls="ProductTable">
+            </b-pagination>
         </b-tab>
         <!--Создание продукта-->
         <b-modal id="modal-add-product" title="Добавление продукта" 
@@ -134,7 +145,9 @@ export default {
             code:'11-1111-AS11',
             name:'',
             price: 0,
-            categoryId: 0,
+            categoryId: 1,
+            CurrentPage:1,
+            PerPage:15,
             fields:[
                 'Id',
                 'Наименование',
@@ -185,10 +198,16 @@ export default {
                 });
         
     },
+    computed: {
+      rows() {
+        return this.ProductItems.length
+      }
+    },
     methods: {
 
         async AddProduct() {
-            await axios.post(this.$ApiUrl + '/Product', {
+            if(this.name != '' && this.price != 0 && this.categoryId != 0) {
+                await axios.post(this.$ApiUrl + '/Product', {
                     name: this.name,
                     price: Number.parseInt(this.price),
                     categoryId: this.categoryId,
@@ -211,12 +230,14 @@ export default {
                         alert(error);
                 });
                 
-            location.reload();
+                location.reload();
+            }
+            else alert("Введите значение всех полей");            
         },
 
         async EditProduct() {
-
-            await axios.put(this.$ApiUrl + '/Product', {
+            if(this.name != '' && this.price != 0 && this.categoryId != 0){
+                await axios.put(this.$ApiUrl + '/Product', {
                     id: this.id,
                     name: this.name,
                     price: Number.parseInt(this.price),
@@ -240,7 +261,9 @@ export default {
                         alert(error);
                 });
                 
-            location.reload();
+                location.reload();
+            }
+            else alert("Введите значение всех полей");            
         },
 
         async DeleteProduct(id) {

@@ -91,38 +91,39 @@ export default {
     },
     methods: {
         SignOn() {
-
-                //alert("Регистрация пошла!");
-                
-                axios.post(this.$ApiUrl + '/Account', {
-                    Name: this.name,
-                    Email: this.email,
-                    Password: this.password,
-                    Adress: this.adress,
-                    ConfirmPassword: this.confirmPassword
-                },
-                {
-                    headers : {
-                        'Content-Type':'application/json',
-                        'Accept':'application/json'  
+                if(this.name != '' && this.email != '' && this.password != '' && this.confirmPassword != ''){
+                    if(this.password == this.confirmPassword) {
+                        axios.post(this.$ApiUrl + '/Account', {
+                        Name: this.name,
+                        Email: this.email,
+                        Password: this.password,
+                        Adress: this.adress,
+                        ConfirmPassword: this.confirmPassword
+                    },
+                    {
+                        headers : {
+                            'Content-Type':'application/json',
+                            'Accept':'application/json'  
+                        }
+                    },
+                    {
+                        withCredentials: true
+                    })
+                    .then(function(response) {
+                            const obj = JSON.parse(response.data);
+                            localStorage.setItem("Token", obj.Token);
+                            localStorage.setItem("Name", obj.Name);
+                            localStorage.setItem("Email", obj.Email);
+                            localStorage.setItem("RoleId", obj.RoleId);
+                            router.push('customer');
+                    })
+                    .catch(function (error) {
+                            alert(error);
+                    });
                     }
-                },
-                {
-                    withCredentials: true
-                })
-                .then(function(response) {
-                        alert(response.data);
-                        const obj = JSON.parse(response.data);
-                        localStorage.setItem("Token", obj.Token);
-                        localStorage.setItem("Name", obj.Name);
-                        localStorage.setItem("Email", obj.Email);
-                        localStorage.setItem("RoleId", obj.RoleId);
-                        router.push('customer');
-                })
-                .catch(function (error) {
-                        alert(error);
-                }); 
-                
+                    else alert("Пароли не совпадают");
+                }
+                else alert("Заполните все поля");                                           
             }            
     }
 }

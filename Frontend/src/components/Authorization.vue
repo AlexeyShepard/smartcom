@@ -2,12 +2,12 @@
     <div class="auth">
         <b-container>
             <b-row>
-
                 <form action="">
                     <div class="modal-card" style="width: 500px" >
                         <header class="modal-card-head">
                             <p class="modal-card-title">Авторизация</p>
-                        </header>
+                        </header>                   
+                        
                         <section class="modal-card-body">
                             <b-field label="Email">
                                 <b-input
@@ -32,11 +32,10 @@
                         </section>
                         <router-link to="/reg">Зарегистрироваться</router-link>
                         <footer class="modal-card-foot">
-                            <b-button variant="primary" @click="SignIn()">Войти</b-button>
+                            <b-button type="submit" variant="primary" @click="SignIn()">Войти</b-button>
                         </footer>
                     </div>
                 </form>
-
             </b-row>         
         </b-container>               
     </div>
@@ -48,14 +47,18 @@ import axios from 'axios';
 import router from '@/router';
 
 export default {
+    
     data() {
-        return {
+        return {          
             email: '',
-            password: ''
+            password: '',
+            error: []
+
         }
     },
     methods: {        
-        SignIn() {               
+        SignIn() {    
+            if(this.email != '' && this.password != '') {
                 axios.post(this.$ApiUrl + '/Account/login', {
                     Email: this.email,
                     Password: this.password
@@ -82,8 +85,9 @@ export default {
                 .catch(function (error) {
                         alert(error);
                 });
-                
-            }            
+            } 
+            else alert("Заполните все поля и повторите попытку");                                       
+        }            
     }
 }
 

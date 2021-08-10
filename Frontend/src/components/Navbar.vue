@@ -19,20 +19,24 @@
                         <b-button id="show-btn" @click="ShowModal" variant="primary">Корзина</b-button>
 
                         <b-modal ref="modal-1" hide-footer title="Корзина">
-                            <p>Тут пуфто!</p>
-                            <b-table striped hover :items="BusketItems" :fields="fields">
-                                <template #cell(Наименование)="data">
-                                    {{ data.item.name }}
-                                </template>
-                                <template #cell(Кол-во)>
-                                    {{ 1 }}
-                                </template>
-                                <template #cell(Цена)="data">
-                                    {{ data.item.price }}
-                                </template>
-                            </b-table>
-                            <b-button class="mt-3" variant="outline-warning" block @click="MakeOrder">Оформить заказ</b-button>
-                            <b-button class="mt-3" variant="outline-danger" block @click="ClearOrder">Очистить корзину</b-button>
+                            <div v-if="IsEmpty()">
+                                <p>Тут пуфто!</p>
+                            </div>
+                            <div v-else>
+                                <b-table striped hover :items="BusketItems" :fields="fields">
+                                    <template #cell(Наименование)="data">
+                                        {{ data.item.name }}
+                                    </template>
+                                    <template #cell(Цена)="data">
+                                        {{ data.item.price }}
+                                    </template>
+                                    <template #cell(Действия)="data">
+                                        <b-button variant="danger" size="sm" @click="RemoveFromBusket(data.item.id)">Удалить</b-button>    
+                                    </template>
+                                </b-table>
+                                <b-button class="mt-3" variant="outline-warning" block @click="MakeOrder">Оформить заказ</b-button>
+                                <b-button class="mt-3" variant="outline-danger" block @click="ClearOrder">Очистить корзину</b-button>
+                            </div>                                                      
                         </b-modal>
                     </div>
                 </div>                         
@@ -61,8 +65,8 @@ export default {
         return {
             fields: [
                 'Наименование',
-                'Кол-во',
-                'Цена'
+                'Цена',
+                'Действия'
             ],
             BusketItems: []
         }
@@ -71,12 +75,27 @@ export default {
         IsAuth() {
             if(localStorage.getItem("Token") != undefined) return true;
         },
+        IsEmpty() {
+            if(localStorage.getItem("Busket") == "") return true;
+        },
         Logout() {
             localStorage.clear();
             router.push("auth");
         },
         ShowModal() {
             this.$refs['modal-1'].show()
+        },
+        RemoveFromBusket(id) {
+            var Busket = JSON.parse("[" + localStorage.getItem("Busket") + "]");
+            var index = Busket.indexOf(id);
+            if (index !== -1) {
+                Busket.splice(index, 1);
+            }
+
+            localStorage.removeItem("Busket");
+            localStorage.setItem("Busket", Busket);
+
+            location.reload();
         },
         ClearOrder() {
             localStorage.setItem("Busket", []);

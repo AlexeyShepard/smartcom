@@ -1,7 +1,12 @@
 <template>
     <div>
         <b-tab title="Продукты">
-            <b-table striped hover :items="ProductItems" :fields="fields">               
+            <b-table id="ProductTable"
+            striped hover 
+            :items="ProductItems" 
+            :fields="fields"
+            :per-page="PerPage"
+            :current-page="CurrentPage">               
                 <template #cell(Код)="data">
                     {{ data.item.code }}
                 </template>
@@ -17,7 +22,13 @@
                 <template #cell(Действия)="data">
                     <b-button variant="primary" size="sm" v-b-modal.modal-add-to-busket @click="OpenAddToBusketModal(data.item.id)">В корзину</b-button>    
                 </template>
-            </b-table>   
+            </b-table>
+            <b-pagination
+                    v-model="CurrentPage"
+                    :total-rows="rows"
+                    :per-page="PerPage"
+                    aria-controls="ProductTable">
+            </b-pagination>   
         </b-tab>
         <!--Добавление товара в корзину-->
         <b-modal id="modal-add-to-busket" title="Добавление товара в корзину" 
@@ -55,6 +66,8 @@ import axios from 'axios'
 export default {
     data() {
         return {
+            CurrentPage:1,
+            PerPage:15,
             id: 0,
             count:1,
             fields:[
@@ -85,6 +98,11 @@ export default {
                 .catch(function (error) {
                         alert('ERROR ' + error);
                 });       
+    },
+    computed: {
+      rows() {
+        return this.ProductItems.length
+      }
     },
     methods: {
         AddProductToBusket() {

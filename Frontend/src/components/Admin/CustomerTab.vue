@@ -2,7 +2,12 @@
     <div>      
         <b-tab title="Заказчики" active>
             <b-button variant="primary modal-button" v-b-modal.modal-add-customer>Добавить</b-button>
-                <b-table striped hover :items="CustomerItems" :fields="fields">
+                
+                <b-table id="CustomerTable" striped hover 
+                :items="CustomerItems" 
+                :fields="fields"
+                :per-page="PerPage"
+                :current-page="CurrentPage">
                     <template #cell(Id)="data">
                         {{ data.item.id }}
                     </template>
@@ -29,6 +34,12 @@
                         <b-button variant="danger" size="sm" @click="DeleteCustomer(data.item.id)">Удалить</b-button>
                     </template>
                 </b-table>
+                <b-pagination
+                    v-model="CurrentPage"
+                    :total-rows="rows"
+                    :per-page="PerPage"
+                    aria-controls="CustomerTable">
+                </b-pagination>
          </b-tab>
 
          <!--Создание заказчика-->
@@ -196,6 +207,8 @@ export default {
             name:'',
             email:'',
             password:'',
+            CurrentPage:1,
+            PerPage:15,
             fields:[
                 'Id',
                 'Имя',
@@ -228,6 +241,11 @@ export default {
                         alert('ERROR ' + error);
                 });       
     },
+    computed: {
+      rows() {
+        return this.CustomerItems.length
+      }
+    },
     methods: {
     
         async DeleteCustomer(id) {
@@ -250,7 +268,8 @@ export default {
         },
 
         async AddCustomer() {
-            axios.post(this.$ApiUrl + '/Customer', {
+            if(this.name != '' && this.email != '' && this.password != ''){
+                axios.post(this.$ApiUrl + '/Customer', {
                     adress: this.address,
                     discount: Number.parseInt(this.discount),
                     password: this.password,
@@ -274,11 +293,14 @@ export default {
                         alert(error);
                 });
                 
-            location.reload();
+                location.reload();
+            }
+            else alert("Заполните все поля");                       
         },
 
         async EditCustomer() {
-            axios.put(this.$ApiUrl + '/Customer', {
+            if(this.name != '' && this.email != '' && this.password != '') {
+                axios.put(this.$ApiUrl + '/Customer', {
                     id: this.id,
                     userId: this.userId,
                     code: this.code,
@@ -305,7 +327,9 @@ export default {
                         alert(error);
                 });
                 
-            location.reload();    
+                location.reload();
+            }
+            else alert("Заполните все поля");                
         },
 
         OpenEditCustomerModal(CustomerData) {

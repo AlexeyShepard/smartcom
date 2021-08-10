@@ -1,7 +1,12 @@
 <template>
     <div>
         <b-tab title="Мои заказы">
-            <b-table striped hover :items="OrderItems" :fields="fields">
+            <b-table id="OrderTable"
+            striped hover 
+            :items="OrderItems" 
+            :fields="fields"
+            :per-page="PerPage"
+            :current-page="CurrentPage">
                 <template #cell(Номер_заказа)="data">
                     {{ data.item.order_Number }}
                 </template>   
@@ -20,6 +25,12 @@
                     </div>                    
                 </template>
             </b-table>  
+            <b-pagination
+                    v-model="CurrentPage"
+                    :total-rows="rows"
+                    :per-page="PerPage"
+                    aria-controls="OrderTable">
+            </b-pagination>
         </b-tab>
     </div>
 </template>
@@ -31,6 +42,8 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            CurrentPage:1,
+            PerPage:15,
             fields: [
                 'Номер_заказа',
                 'Дата_оформления',
@@ -59,6 +72,11 @@ export default {
                 .catch(function (error) {
                         alert('ERROR ' + error);
                 });       
+    },
+    computed: {
+      rows() {
+        return this.OrderItems.length
+      }
     },
     methods: {
         async CancelOrder(id) {
