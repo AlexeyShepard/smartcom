@@ -18,7 +18,7 @@ namespace Backend.Controllers
     }
     
     
-    [Authorize(Roles="Менеджер")]
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class ProductController : ControllerBase

@@ -205,7 +205,7 @@ export default {
                     withCredentials: true
                 })
                 .then(function(response) {
-                        alert("Продукт успешно изменен!");             
+                        alert("Продукт успешно добавлен!");             
                 })
                 .catch(function (error) {
                         alert(error);
@@ -234,7 +234,7 @@ export default {
                     withCredentials: true
                 })
                 .then(function(response) {
-                        alert("Продукт успешно добавлен!");             
+                    alert("Продукт успешно изменен!");             
                 })
                 .catch(function (error) {
                         alert(error);
@@ -263,7 +263,6 @@ export default {
         },
 
         OpenEditProductModal(ProductData) {
-            alert(ProductData);
 
             this.id = ProductData.id;
             this.name = ProductData.name;

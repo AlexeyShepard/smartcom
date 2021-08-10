@@ -26,7 +26,7 @@
                     </template>
                     <template #cell(Действия)="data">
                         <b-button variant="primary" size="sm" v-b-modal.modal-edit-customer @click="OpenEditCustomerModal(data.item)">Редактировать</b-button>
-                        <b-button variant="danger" size="sm" @click="DeleteCustomer(row.item.id)">Удалить</b-button>
+                        <b-button variant="danger" size="sm" @click="DeleteCustomer(data.item.id)">Удалить</b-button>
                     </template>
                 </b-table>
          </b-tab>

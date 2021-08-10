@@ -20,6 +20,17 @@
 
                         <b-modal ref="modal-1" hide-footer title="Корзина">
                             <p>Тут пуфто!</p>
+                            <b-table striped hover :items="BusketItems" :fields="fields">
+                                <template #cell(Наименование)="data">
+                                    {{ data.item.name }}
+                                </template>
+                                <template #cell(Кол-во)>
+                                    {{ 1 }}
+                                </template>
+                                <template #cell(Цена)="data">
+                                    {{ data.item.price }}
+                                </template>
+                            </b-table>
                             <b-button class="mt-3" variant="outline-warning" block @click="MakeOrder">Оформить заказ</b-button>
                             <b-button class="mt-3" variant="outline-danger" block @click="ClearOrder">Очистить корзину</b-button>
                         </b-modal>
@@ -43,8 +54,19 @@
 <script>
 
 import router from '@/router';
+import axios from 'axios';
 
-export default {
+export default {    
+    data() {
+        return {
+            fields: [
+                'Наименование',
+                'Кол-во',
+                'Цена'
+            ],
+            BusketItems: []
+        }
+    },
     methods: {
         IsAuth() {
             if(localStorage.getItem("Token") != undefined) return true;
@@ -57,7 +79,31 @@ export default {
             this.$refs['modal-1'].show()
         },
         ClearOrder() {
+            localStorage.setItem("Busket", []);
+            location.reload();
+        },
+        MakeOrder() {
+            var Busket = JSON.parse("[" + localStorage.getItem("Busket") + "]");
+            axios.post(this.$ApiUrl + '/Order', Busket,
+                {
+                    headers : {
+                        'Content-Type':'application/json',
+                        'Accept':'application/json',
+                        'Authorization':'Bearer ' + localStorage.getItem("Token")  
+                    }
+                },
+                {
+                    withCredentials: true
+                })
+                .then(function(response) {
+                        alert("Заказ успешно оформлен");             
+                })
+                .catch(function (error) {
+                        alert(error);
+                });
 
+            this.ClearOrder();
+            location.reload();
         },
         IsCustomer() {
             if(localStorage.getItem("RoleId") == 2) return true;   
@@ -65,6 +111,31 @@ export default {
         GetUserName() {
             return localStorage.getItem("Name")
         }
+    },
+    created() {
+        if(localStorage.getItem("RoleId") == 2)
+        {
+            var Busket = JSON.parse("[" + localStorage.getItem("Busket") + "]");
+            for(var Key in Busket) {
+                axios.get(this.$ApiUrl + '/Product/' + Busket[Key],
+                    {
+                        headers : {
+                            'Content-Type':'application/json',
+                            'Accept':'application/json',
+                            'Authorization':'Bearer ' + localStorage.getItem("Token")
+                        }
+                    },
+                    {
+                        withCredentials: true
+                    })
+                    .then((response) => {
+                        this.BusketItems.push(response.data);                                   
+                    })
+                    .catch(function (error) {
+                            alert('ERROR ' + error);
+                    });   
+            }
+        }               
     }
 }
 </script>

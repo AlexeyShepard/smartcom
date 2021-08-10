@@ -111,6 +111,7 @@ export default {
                     withCredentials: true
                 })
                 .then(function(response) {
+                        alert(response.data);
                         const obj = JSON.parse(response.data);
                         localStorage.setItem("Token", obj.Token);
                         localStorage.setItem("Name", obj.Name);

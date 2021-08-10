@@ -130,6 +130,37 @@ namespace Backend.Controllers
             return new ObjectResult(Order);
         }
 
+        [Route("customer")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<CRUDOrder>>> GetCustomer()
+        {
+            string CustomerId = User.FindFirst(x => x.Type == ClaimsIdentity.DefaultNameClaimType).Value;
+
+            Customer Customer = await DB.Customers.FirstOrDefaultAsync(c => c.UserId == Convert.ToInt32(CustomerId));
+
+            var Orders = DB.Orders.Where(x => x.CustomerId == Customer.Id);
+            List<CRUDOrder> OrderStatusCustomer = new List<CRUDOrder>();
+
+            foreach (Order Order in new List<Order>(Orders))
+            {
+
+                Status Status = await DB.Statuses.FirstOrDefaultAsync(u => u.Id == Order.StatusId);
+                OrderStatusCustomer.Add(new CRUDOrder
+                {
+                    Id = Order.Id,
+                    Order_Date = Order.Order_Date,
+                    Shipment_Date = Order.Shipment_Date,
+                    Order_Number = Order.Order_Number,
+                    CustomerId = Order.CustomerId,
+                    StatusId = Order.StatusId,
+                    UserName = "",
+                    StatusName = Status.Name
+                });
+            }
+
+            return OrderStatusCustomer;
+        }
+
         [Authorize(Roles = "Менеджер")]
         [HttpPut]
         public async Task<ActionResult<Order>> Put(Order Order)
@@ -148,7 +179,7 @@ namespace Backend.Controllers
             return Ok(Order);
         }
 
-        [Authorize(Roles = "Менеджер")]
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Order>> Delete(int id)
         {
@@ -157,9 +188,11 @@ namespace Backend.Controllers
             {
                 return NotFound();
             }
+            var OrderElements = DB.OrderElements.Where(x => x.OrderId == id);
+            DB.OrderElements.RemoveRange(OrderElements);
             DB.Orders.Remove(Order);
             await DB.SaveChangesAsync();
-            return Ok(Order);
+            return Ok();
         }
 
         private int GenerateNumber()
