@@ -1,3 +1,4 @@
+<!--Форма авторизации пользователя-->
 <template>
     <div class="auth">
         <b-container>
@@ -32,7 +33,7 @@
                         </section>
                         <router-link to="/reg">Зарегистрироваться</router-link>
                         <footer class="modal-card-foot">
-                            <b-button type="submit" variant="primary" @click="SignIn()">Войти</b-button>
+                            <b-button type="submit" variant="primary" @click.prevent="SignIn()">Войти</b-button>
                         </footer>
                     </div>
                 </form>
@@ -72,7 +73,8 @@ export default {
                 {
                     withCredentials: true
                 })
-                .then(function(response) {
+                .then((response) => {
+                        alert("Вы успешно авторизовались");
                         const obj = JSON.parse(response.data);
                         localStorage.setItem("Token", obj.Token);
                         localStorage.setItem("Name", obj.Name);

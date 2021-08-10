@@ -1,3 +1,4 @@
+<!--Регистрация пользователя-->
 <template>
     <div class="reg">
         <b-container>
@@ -64,7 +65,7 @@
 
                         </section>
                         <footer class="modal-card-foot">
-                            <b-button variant="primary" @click="SignOn()">Зарегистрироваться</b-button>
+                            <b-button variant="primary" @click.prevent="SignOn()">Зарегистрироваться</b-button>
                         </footer>
                     </div>
                 </form>
@@ -90,10 +91,10 @@ export default {
         }
     },
     methods: {
-        SignOn() {
+        async SignOn() {
                 if(this.name != '' && this.email != '' && this.password != '' && this.confirmPassword != ''){
                     if(this.password == this.confirmPassword) {
-                        axios.post(this.$ApiUrl + '/Account', {
+                        await axios.post(this.$ApiUrl + '/Account', {
                         Name: this.name,
                         Email: this.email,
                         Password: this.password,

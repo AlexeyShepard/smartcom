@@ -3,6 +3,9 @@ using System.Text;
 
 namespace Backend.Services
 {
+    /// <summary>
+    /// Опции генерации токена для авторизации
+    /// </summary>
     public class AuthOptions
     {
         public const string ISSUER = "Smartcom"; 

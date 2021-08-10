@@ -1,3 +1,4 @@
+<!--Навбар сайта-->
 <template>
     <div>
         <b-navbar toggleable="lg" type="dark" class="navb">
@@ -80,7 +81,7 @@ export default {
         },
         Logout() {
             localStorage.clear();
-            router.push("auth");
+            router.push("/");
         },
         ShowModal() {
             this.$refs['modal-1'].show()

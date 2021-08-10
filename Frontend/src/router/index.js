@@ -1,3 +1,5 @@
+///Роутер с описанием всех маршрутов
+
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Registration from '@/components/Registration';
@@ -14,7 +16,7 @@ const routes = [
     component: Registration
   },
   {
-    path: '/auth',
+    path: '/',
     name: "Authorization",
     component: Authorization
   },
@@ -28,14 +30,6 @@ const routes = [
     name: 'AdminArea',
     component: AdminArea
   }
-  /*{
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about"  '../views/About.vue')
-  }*/
 ]
 
 const router = new VueRouter({

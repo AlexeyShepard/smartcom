@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace Backend.Services
 {
+    /// <summary>
+    /// Инициализация данных для БД
+    /// </summary>
     public class Initialize
     {
         public static void Run(SmartcomContext context)
